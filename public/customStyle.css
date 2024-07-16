@@ -1,0 +1,27 @@
+h1 {
+    padding-top: 30px;
+    padding-bottom: 15px;
+}
+
+#invoiceStatistics {
+    display: flex;
+}
+
+#invoiceStatistics li {
+    margin-right: 40px;
+}
+
+.flash-message {
+    position: fixed;
+    top: 0;
+    width: 88%;
+    z-index: 1000;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+    }
+}
