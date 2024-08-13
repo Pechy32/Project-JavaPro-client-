@@ -1,51 +1,46 @@
-/*  _____ _______         _                      _
- * |_   _|__   __|       | |                    | |
- *   | |    | |_ __   ___| |___      _____  _ __| | __  ___ ____
- *   | |    | | '_ \ / _ \ __\ \ /\ / / _ \| '__| |/ / / __|_  /
- *  _| |_   | | | | |  __/ |_ \ V  V / (_) | |  |   < | (__ / /
- * |_____|  |_|_| |_|\___|\__| \_/\_/ \___/|_|  |_|\_(_)___/___|
- *                                _
- *              ___ ___ ___ _____|_|_ _ _____
- *             | . |  _| -_|     | | | |     |  LICENCE
- *             |  _|_| |___|_|_|_|_|___|_|_|_|
- *             |_|
- *
- *   PROGRAMOVÁNÍ  <>  DESIGN  <>  PRÁCE/PODNIKÁNÍ  <>  HW A SW
- *
- * Tento zdrojový kód je součástí výukových seriálů na
- * IT sociální síti WWW.ITNETWORK.CZ
- *
- * Kód spadá pod licenci prémiového obsahu a vznikl díky podpoře
- * našich členů. Je určen pouze pro osobní užití a nesmí být šířen.
- * Více informací na http://www.itnetwork.cz/licence
- */
-
-
+// Base URL for the API
 const API_URL = "http://localhost:8080";
 
-const fetchData = (url, requestOptions) => {
+/**
+ * Makes an HTTP request to the given URL using the specified request options.
+ * Throws an error if the response is not successful.
+ *
+ * @param {string} url - The endpoint to send the request to.
+ * @param {object} requestOptions - The configuration object for the request.
+ * @returns {Promise<object | undefined>} - A promise that resolves to the response data as JSON, or undefined for DELETE requests.
+ * @throws {Error} - Throws an error if the network response is not ok.
+ */
+const fetchData = async (url, requestOptions) => {
     const apiUrl = `${API_URL}${url}`;
 
-    return fetch(apiUrl, requestOptions)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-            }
+    try {
+        const response = await fetch(apiUrl, requestOptions);
 
-            if (requestOptions.method !== 'DELETE')
-                return response.json();
-        })
-        .catch((error) => {
-            throw error;
-        });
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+        }
+
+        if (requestOptions.method !== 'DELETE') {
+            return response.json();
+        }
+    } catch (error) {
+        throw error;
+    }
 };
 
-export const apiGet = (url, params) => {
+/**
+ * Sends a GET request to the specified URL with the given query parameters.
+ *
+ * @param {string} url - The endpoint to send the GET request to.
+ * @param {object} [params={}] - An optional object representing query parameters.
+ * @returns {Promise<object>} - A promise that resolves to the response data as JSON.
+ */
+export const apiGet = (url, params = {}) => {
     const filteredParams = Object.fromEntries(
-        Object.entries(params || {}).filter(([_, value]) => value != null)
+        Object.entries(params).filter(([_, value]) => value != null)
     );
 
-    const apiUrl = `${url}?${new URLSearchParams(filteredParams)}`;
+    const apiUrl = `${url}?${new URLSearchParams(filteredParams).toString()}`;
     const requestOptions = {
         method: "GET",
     };
@@ -53,26 +48,46 @@ export const apiGet = (url, params) => {
     return fetchData(apiUrl, requestOptions);
 };
 
+/**
+ * Sends a POST request to the specified URL with the given data.
+ *
+ * @param {string} url - The endpoint to send the POST request to.
+ * @param {object} data - The data to include in the body of the POST request.
+ * @returns {Promise<object>} - A promise that resolves to the response data as JSON.
+ */
 export const apiPost = (url, data) => {
     const requestOptions = {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
     };
 
     return fetchData(url, requestOptions);
 };
 
+/**
+ * Sends a PUT request to the specified URL with the given data.
+ *
+ * @param {string} url - The endpoint to send the PUT request to.
+ * @param {object} data - The data to include in the body of the PUT request.
+ * @returns {Promise<object>} - A promise that resolves to the response data as JSON.
+ */
 export const apiPut = (url, data) => {
     const requestOptions = {
         method: "PUT",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
     };
 
     return fetchData(url, requestOptions);
 };
 
+/**
+ * Sends a DELETE request to the specified URL.
+ *
+ * @param {string} url - The endpoint to send the DELETE request to.
+ * @returns {Promise<void>} - A promise that resolves when the DELETE request is complete.
+ */
 export const apiDelete = (url) => {
     const requestOptions = {
         method: "DELETE",

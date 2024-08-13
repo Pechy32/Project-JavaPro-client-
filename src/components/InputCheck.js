@@ -1,28 +1,49 @@
-export function InputCheck(props) {
-  // podporované typy pro element input
-  const INPUTS = ["checkbox", "radio"];
+import React from 'react';
 
-  // validace typu
-  const type = props.type.toLowerCase();
-  const checked = props.checked || "";
+/**
+ * A functional component that renders an input element of type "checkbox" or "radio" within a labeled form group.
+ * The component validates the input type and only renders if the type is "checkbox" or "radio".
+ *
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.type - The type of the input element, either "checkbox" or "radio".
+ * @param {string} props.name - The name attribute for the input element.
+ * @param {string} props.value - The value attribute for the input element.
+ * @param {boolean} [props.checked=false] - The checked state of the input element.
+ * @param {string} props.label - The label text to display next to the input element.
+ * @param {function} props.handleChange - The function to call when the input's checked state changes.
+ * @returns {JSX.Element|null} - The JSX for the input element wrapped in a form group, or null if the type is invalid.
+ */
+export function InputCheck({
+  type,
+  name,
+  value,
+  checked = false,
+  label,
+  handleChange,
+}) {
+  // Supported input types
+  const SUPPORTED_INPUTS = ["checkbox", "radio"];
 
-  if (!INPUTS.includes(type)) {
+  // Validate the input type
+  const inputType = type.toLowerCase();
+
+  if (!SUPPORTED_INPUTS.includes(inputType)) {
     return null;
   }
 
   return (
     <div className="form-group form-check">
       <label className="form-check-label">
-        {/* vykreslení s aktuálním typem */}
+        {/* Render the input element with the specified type */}
         <input
-          type={props.type}
+          type={inputType}
           className="form-check-input"
-          name={props.name}
-          value={props.value}
+          name={name}
+          value={value}
           checked={checked}
-          onChange={props.handleChange}
+          onChange={handleChange}
         />{" "}
-        {props.label}
+        {label}
       </label>
     </div>
   );
